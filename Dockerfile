@@ -1,14 +1,16 @@
-FROM wurstmeister/base
+FROM ubuntu:trusty-20190425
 
-MAINTAINER Wurstmeister
+MAINTAINER BrightMountainMediaInc
 
+RUN apt-get update; apt-get install -y ca-certificates unzip openjdk-7-jre-headless wget
+ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64/
 ENV ZOOKEEPER_VERSION 3.4.13
 
 #Download Zookeeper
-RUN wget -q http://mirror.vorboss.net/apache/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
-wget -q https://www.apache.org/dist/zookeeper/KEYS && \
-wget -q https://www.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz.asc && \
-wget -q https://www.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz.md5
+RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
+wget https://dist.apache.org/repos/dist/release/zookeeper/KEYS && \
+wget https://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz.asc && \
+wget https://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz.md5
 
 #Verify download
 RUN md5sum -c zookeeper-${ZOOKEEPER_VERSION}.tar.gz.md5 && \
@@ -31,4 +33,4 @@ EXPOSE 2181 2888 3888
 WORKDIR /opt/zookeeper-${ZOOKEEPER_VERSION}
 VOLUME ["/opt/zookeeper-${ZOOKEEPER_VERSION}/conf", "/opt/zookeeper-${ZOOKEEPER_VERSION}/data"]
 
-CMD /usr/sbin/sshd && bash /usr/bin/start-zk.sh
+CMD bash /usr/bin/start-zk.sh
